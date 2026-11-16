@@ -18,6 +18,7 @@ COLUMNS = [
     ("Win_Rate",         "勝率",       "pct"),
     ("Profit_Factor",    "盈虧比",     "num2"),
     ("Trade_Frequency",  "交易頻率",   "num1"),
+    ("Execution_Time",   "Time (s)",   "num3"),
 ]
 
 
@@ -59,6 +60,7 @@ class LeaderboardModel(QAbstractTableModel):
                 "Win_Rate":        m.get("Win_Rate", 0.0),
                 "Profit_Factor":   m.get("Profit_Factor", 0.0),
                 "Trade_Frequency": m.get("Trade_Frequency", 0.0),
+                "Execution_Time":  r.get("is", {}).get("execution_time"),
                 "_orig_index":     orig_idx,
             })
         self.endResetModel()
@@ -112,6 +114,8 @@ def _format(val, fmt: str) -> str:
         return f"{val:.2f}" if isinstance(val, float) else str(val)
     if fmt == "num1":
         return f"{val:.1f}" if isinstance(val, float) else str(val)
+    if fmt == "num3":
+        return f"{val:.3f}" if isinstance(val, (int, float)) else "—"
     if fmt == "int":
         return str(int(val)) if isinstance(val, (int, float)) else str(val)
     return str(val)

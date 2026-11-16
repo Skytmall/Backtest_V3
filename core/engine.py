@@ -1,5 +1,6 @@
 # core/engine.py
 import math
+import time
 from typing import Dict, Optional, List
 import numpy as np
 import pandas as pd
@@ -79,6 +80,7 @@ class BacktestEngine:
 
     @trace_call
     def run(self, df: pd.DataFrame, strategy: BaseStrategy, start_date: str = None, end_date: str = None) -> Dict:
+        start_time = time.perf_counter()
         df_proc = df.copy().ffill().dropna(subset=["Open", "High", "Low", "Close"])
         df_proc = strategy.generate_indicators(df_proc)
         df_proc["VWAP_Calc"] = self._calculate_vwap(df_proc)
@@ -227,14 +229,17 @@ class BacktestEngine:
         metrics["Total_Fee"] = total_fee
         metrics["Total_Tax"] = total_tax
 
-        return {
+        result = {
             "metrics": metrics,
             "equity_df": eq_df,
             "trades_df": pd.DataFrame(trades_history)
         }
+        result["execution_time"] = time.perf_counter() - start_time
+        return result
 
     @trace_call
     def run_benchmark(self, df: pd.DataFrame, start_date: str = None, end_date: str = None) -> Dict:
+        start_time = time.perf_counter()
         df_proc = df.copy().ffill().dropna(subset=["Open", "High", "Low", "Close"])
         if start_date or end_date:
             df_proc = df_proc.loc[start_date:end_date].copy()
@@ -263,11 +268,13 @@ class BacktestEngine:
         equity_curve.insert(0, {"Date": dates[0], "Equity": initial_cap})
         eq_df = pd.DataFrame(equity_curve).set_index("Date")
         
-        return {
+        result = {
             "metrics": evaluate_performance(eq_df, trades_history, len(df_proc), self.config),
             "equity_df": eq_df,
             "trades_df": pd.DataFrame(trades_history)
         }
+        result["execution_time"] = time.perf_counter() - start_time
+        return result
 
     def run_indicator_only(self, df: pd.DataFrame, strategy: BaseStrategy) -> pd.DataFrame:
         df_proc = df.copy().ffill().dropna(subset=["Open", "High", "Low", "Close"])
