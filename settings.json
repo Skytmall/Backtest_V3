@@ -1,0 +1,17 @@
+{
+    "date_jump_mode": "N年前的一月一號",
+    "show_kpi": true,
+    "chart_height": 700,
+    "default_metrics": [
+        "Total_Return",
+        "Max_Drawdown",
+        "Sharpe_Ratio",
+        "Win_Rate"
+    ],
+    "max_workers": 4,
+    "default_capital": 1000000,
+    "default_fee": 0.1425,
+    "default_tax": 0.3,
+    "debug_trace": false,
+    "deep_trace": false
+}
