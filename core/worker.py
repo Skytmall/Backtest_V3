@@ -26,7 +26,7 @@ def run_single_task_worker(
         if not strat_cls: 
             raise ValueError(f"找不到策略: {strat_id}")
             
-        strategy = strat_cls(**params)
+        strategy_is = strat_cls(**params)
         engine = BacktestEngine(config)
 
         result = {
@@ -42,16 +42,13 @@ def run_single_task_worker(
 
         # 執行 IS (In-Sample)
         if split_date and split_date.strip():
-            result["is"] = engine.run(df, strategy, end_date=split_date)
-        else:
-            result["is"] = engine.run(df, strategy)
-
-        # 執行 OOS (Out-of-Sample)
-        if split_date and split_date.strip():
-            result["oos"] = engine.run(df, strategy, start_date=split_date)
+            result["is"] = engine.run(df, strategy_is, end_date=split_date)
+            strategy_oos = strat_cls(**params)
+            result["oos"] = engine.run(df, strategy_oos, start_date=split_date)
             result["benchmark"]["is"] = engine.run_benchmark(df, end_date=split_date)
             result["benchmark"]["oos"] = engine.run_benchmark(df, start_date=split_date)
         else:
+            result["is"] = engine.run(df, strategy_is)
             result["benchmark"]["is"] = engine.run_benchmark(df)
 
         return result
