@@ -230,8 +230,7 @@ class BacktestEngine:
         return {
             "metrics": metrics,
             "equity_df": eq_df,
-            "trades_df": pd.DataFrame(trades_history),
-            "df_proc": df_proc
+            "trades_df": pd.DataFrame(trades_history)
         }
 
     @trace_call
@@ -267,8 +266,7 @@ class BacktestEngine:
         return {
             "metrics": evaluate_performance(eq_df, trades_history, len(df_proc), self.config),
             "equity_df": eq_df,
-            "trades_df": pd.DataFrame(trades_history),
-            "df_proc": df_proc
+            "trades_df": pd.DataFrame(trades_history)
         }
 
     def run_indicator_only(self, df: pd.DataFrame, strategy: BaseStrategy) -> pd.DataFrame:
